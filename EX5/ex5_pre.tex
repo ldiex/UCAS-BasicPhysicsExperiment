@@ -1,0 +1,349 @@
+% Template of basic phisics experiment 基于 article template, 在此基础上做修改
+% 设定文章编码类型, 正文字号为五号则 zihao=5, 正文字号为小四则 zihao=-4
+\documentclass[zihao=5, UTF8]{article}		
+
+
+% 自定义宏定义
+\def\N{\mathbb{N}}
+\def\F{\mathbb{F}}
+\def\Z{\mathbb{Z}}
+\def\Q{\mathbb{Q}}
+\def\R{\mathbb{R}}
+\def\C{\mathbb{C}}
+\def\T{\mathbb{T}}
+\def\S{\mathbb{S}}
+\def\A{\mathbb{A}}
+\def\I{\mathscr{I}}
+\def\d{\mathrm{d}}
+\def\p{\partial}
+
+
+% 物理实验报告所需的其它宏包
+\usepackage{ulem}   % \uline 下划线支持
+
+% 导入基本宏包
+\usepackage[UTF8]{ctex}     % 设置文档为中文语言
+\usepackage[colorlinks, linkcolor=blue, anchorcolor=blue, citecolor=blue, urlcolor=blue]{hyperref}  % 宏包：自动生成超链接 (此宏包与标题中的数学环境冲突)
+% \usepackage{docmute}    % 宏包：子文件导入时自动去除导言区, 用于主/子文件的写作方式, \include{./51单片机笔记}即可. 注：启用此宏包会导致.tex文件capacity受限. 
+\usepackage{amsmath}    % 宏包：数学公式
+\usepackage{physics}
+\usepackage{bm}
+\usepackage{mathrsfs}   % 宏包：提供更多数学符号
+\usepackage{amssymb}    % 宏包：提供更多数学符号
+\usepackage{pifont}     % 宏包：提供了特殊符号和字体
+\usepackage{extarrows}  % 宏包：更多箭头符号
+\usepackage{multirow}
+\usepackage{siunitx}
+
+\renewcommand{\dd}{\mathrm{d}}
+
+% 列表环境设置
+\usepackage{enumitem}   % 宏包：列表环境设置
+    \setlist[enumerate]{itemsep=0pt, parsep=0pt, topsep=0pt, partopsep=0pt, leftmargin=3.5em} 
+    \setlist[itemize]{itemsep=0pt, parsep=0pt, topsep=0pt, partopsep=0pt, leftmargin=3.5em}
+    \newlist{circledenum}{enumerate}{1} % 创建一个新的枚举环境  
+    \setlist[circledenum,1]{  
+        label=\protect\circled{\arabic*}, % 使用 \arabic* 来获取当前枚举计数器的值, 并用 \circled 包装它  
+        ref=\arabic*, % 如果需要引用列表项, 这将决定引用格式（这里仍然使用数字）
+        itemsep=0pt, parsep=0pt, topsep=0pt, partopsep=0pt, leftmargin=3.5em
+    }  
+% 文章页面 margin 设置
+\usepackage[a4paper]{geometry}  % 宏包：文章页面 margin 设置
+    \geometry{top=0.75in}
+    \geometry{bottom=0.75in}
+    \geometry{left=0.75in}
+    \geometry{right=0.75in}   % 设置上下左右页边距
+    \geometry{marginparwidth=1.75cm}    % 设置边注距离（注释、标记等）
+
+% 自定义数学环境
+\usepackage{amsthm} % 宏包：数学环境配置
+% theorem-line 环境自定义
+    \newtheoremstyle{MyLineTheoremStyle}% <name>
+        {11pt}% <space above>
+        {11pt}% <space below>
+        {}% <body font> 使用默认正文字体
+        {}% <indent amount>
+        {\bfseries}% <theorem head font> 设置标题项为加粗
+        {：}% <punctuation after theorem head>
+        {.5em}% <space after theorem head>
+        {\textbf{#1}\thmnumber{#2}\ \ (\,\textbf{#3}\,)}% 设置标题内容顺序
+    \theoremstyle{MyLineTheoremStyle} % 应用自定义的定理样式
+    \newtheorem{LineTheorem}{Theorem.\,}
+% theorem-block 环境自定义
+    \newtheoremstyle{MyBlockTheoremStyle}% <name>
+        {11pt}% <space above>
+        {11pt}% <space below>
+        {}% <body font> 使用默认正文字体
+        {}% <indent amount>
+        {\bfseries}% <theorem head font> 设置标题项为加粗
+        {：\\ \indent}% <punctuation after theorem head>
+        {.5em}% <space after theorem head>
+        {\textbf{#1}\thmnumber{#2}\ \ (\,\textbf{#3}\,)}% 设置标题内容顺序
+    \theoremstyle{MyBlockTheoremStyle} % 应用自定义的定理样式
+    \newtheorem{BlockTheorem}[LineTheorem]{Theorem.\,} % 使用 LineTheorem 的计数器
+% definition 环境自定义
+    \newtheoremstyle{MySubsubsectionStyle}% <name>
+        {11pt}% <space above>
+        {11pt}% <space below>
+        {}% <body font> 使用默认正文字体
+        {}% <indent amount>
+        {\bfseries}% <theorem head font> 设置标题项为加粗
+        {：\\ \indent}% <punctuation after theorem head>
+        {0pt}% <space after theorem head>
+        {\textbf{#3}}% 设置标题内容顺序
+    \theoremstyle{MySubsubsectionStyle} % 应用自定义的定理样式
+    \newtheorem{definition}{}
+
+
+% 有色文本框及其设置
+\usepackage[dvipsnames,svgnames]{xcolor}    %设置插入的文本框颜色
+\usepackage[strict]{changepage}     % 提供一个 adjustwidth 环境
+\usepackage{framed}     % 实现方框效果
+    \definecolor{graybox_color}{rgb}{0.95,0.95,0.96} % 文本框颜色. 修改此行中的 rgb 数值即可改变方框纹颜色, 具体颜色的rgb数值可以在网站https://colordrop.io/ 中获得. （截止目前的尝试还没有成功过, 感觉单位不一样）（找到喜欢的颜色, 点击下方的小眼睛, 找到rgb值, 复制修改即可）
+    \newenvironment{graybox}{%
+    \def\FrameCommand{%
+    \hspace{1pt}%
+    {\color{gray}\small \vrule width 2pt}%
+    {\color{graybox_color}\vrule width 4pt}%
+    \colorbox{graybox_color}%
+    }%
+    \MakeFramed{\advance\hsize-\width\FrameRestore}%
+    \noindent\hspace{-4.55pt}% disable indenting first paragraph
+    \begin{adjustwidth}{}{7pt}%
+    \vspace{2pt}\vspace{2pt}%
+    }
+    {%
+    \vspace{2pt}\end{adjustwidth}\endMakeFramed%
+    }
+
+% 各级标题自定义设置
+\usepackage{titlesec}   
+    % section标题自定义设置 
+    \titleformat{\section}[hang]{\normalfont\huge\bfseries\centering}{第\,\thesection\,部分}{20pt}{}
+    % subsection标题自定义设置 
+    \titleformat{\subsection}[hang]{\normalfont\Large\bfseries}{\,\thesubsection\,}{8pt}{}
+    % subsubsection标题自定义设置
+    \titleformat{\subsubsection}[hang]{\normalfont\large\bfseries}{\,\thesubsubsection\,}{6pt}{}
+
+% 外源代码插入设置
+\usepackage{matlab-prettifier}
+    \lstset{
+        style=Matlab-editor,  % 继承matlab代码颜色等
+    }
+\usepackage[most]{tcolorbox} % 引入tcolorbox包 
+\usepackage{listings} % 引入listings包
+    \tcbuselibrary{listings, skins, breakable}
+    \lstdefinestyle{matlabstyle}{
+        language=Matlab,
+        basicstyle=\small,
+        breakatwhitespace=false,
+        breaklines=true,
+        captionpos=b,
+        keepspaces=true,
+        numbers=left,
+        numbersep=15pt,
+        showspaces=false,
+        showstringspaces=false,
+        showtabs=false,
+        tabsize=2
+    }
+    \newtcblisting{matlablisting}{
+        arc=0pt,
+        top=0pt,
+        bottom=0pt,
+        left=1mm,
+        listing only,
+        listing style=matlabstyle,
+        breakable,
+        colback=white   % 选一个合适的颜色
+    }
+
+% table 支持
+\usepackage{booktabs}   % 宏包：三线表
+\usepackage{tabularray} % 宏包：表格排版
+\usepackage{longtable}  % 宏包：长表格
+
+% figure 设置
+\usepackage{graphicx}  % 支持 jpg, png, eps, pdf 图片 
+\usepackage{svg}       % 支持 svg 图片
+    \svgsetup{
+        % 指向 inkscape.exe 的路径
+        inkscapeexe = C:/aa_MySame/inkscape/bin/inkscape.exe, 
+        % 一定程度上修复导入后图片文字溢出几何图形的问题
+        inkscapelatex = false                 
+    }
+
+
+% 图表进阶设置
+\usepackage{float}     % 图表位置浮动设置 
+\usepackage{caption}    % 图注、表注
+    \captionsetup[figure]{name=图}  
+    \captionsetup[table]{name=表}
+    \captionsetup{labelfont=bf, font=small}
+
+%% 文章默认字体设置
+%    \usepackage{fontspec}   % 宏包：字体设置
+%        \setmainfont{SimSun}[
+%            BoldFont = SimHei, % 设置粗体字为黑体
+%            ItalicFont = KaiTi, % 设置斜体字为楷体
+%            BoldItalicFont = KaiTi % 设置粗斜体字为楷体
+%        ] 
+%        %\setCJKmainfont[AutoFakeBold=3]{SimSun} % 设置加粗字体为 SimSun 族, AutoFakeBold 可以调整字体粗细
+%        \setmainfont{Times New Roman} % 设置英文字体为Times New Roman
+
+
+% 其它设置
+    % equation 公式编号设置
+        \makeatletter  
+        \renewcommand{\theequation}{\thesection.\arabic{equation}}  
+        \makeatother
+    % 脚注设置
+        \renewcommand\thefootnote{\ding{\numexpr171+\value{footnote}}}
+    % 参考文献引用设置
+        \bibliographystyle{unsrt}   % 设置参考文献引用格式为unsrt
+        \newcommand{\upcite}[1]{\textsuperscript{\cite{#1}}}     % 自定义上角标式引用
+    % 文章序言设置
+        \newcommand{\cnabstractname}{序言}
+        \newenvironment{cnabstract}{%
+            \par\Large
+            \noindent\mbox{}\hfill{\bfseries \cnabstractname}\hfill\mbox{}\par
+            \vskip 2.5ex
+            }{\par\vskip 2.5ex}
+
+
+% 页眉页脚设置
+\usepackage{fancyhdr}   %宏包：页眉页脚设置
+    \pagestyle{fancy}
+    \fancyhf{}
+    \cfoot{\thepage}
+    \renewcommand\headrulewidth{1pt}
+    \renewcommand\footrulewidth{0pt}
+    \rhead{\bfseries 分组序号: 3-04-1}    
+    \chead{《基础物理实验》实验报告,\ 潘天麟\ 2023K8009908023}
+    \lhead{2024.11.27}
+
+\usepackage{pdfpages}
+
+% 开始编辑文章
+
+\begin{document}
+\noindent\begin{flushright}
+    \zihao{2}{分组序号: 3-04-1}
+\end{flushright}
+
+\newcommand*{\boldsong}{\CJKfamily{boldsong}}
+
+
+\begin{center}\large
+    \noindent{\Huge\bfseries\boldsong《基础物理实验》实验报告 }
+    \\\vspace{0.4cm}
+    \noindent\textit{
+        \textbf{\boldsong 实验名称：}\uline{\hspace{2.3cm} 气轨实验\hspace{2.3cm}}\hspace{0.4cm} 
+        指导教师：\uline{\hspace{1.5cm} 待定 \hspace{1.5cm}}}
+    \\\vspace{0.1cm}
+    \noindent\textit{
+        姓名：\uline{\,\,潘天麟\,\,}\hspace{0.2cm}
+        学号：\uline{\,\,{\upshape 2023K8009908023}\,\,}\hspace{0.2cm}
+        专业：\uline{\,\,人工智能\,\,}\hspace{0.2cm}
+        班级：\uline{\,\,\upshape{2313}\,\,}\,组号：\uline{\,\,\upshape{3-04-1}\,\,}}
+    \\\vspace{0.1cm}
+    \noindent\textit{
+        实验日期：\uline{\,\,{\upshape 2024.11.27}\,\,}\hspace{0.2cm}
+        实验地点：\uline{\,\,\,教学楼{\upshape 716}\,\,\,}\hspace{0.2cm}
+        是否调课/补课：\uline{\,\,否\,\,}\hspace{0.2cm}
+        成绩：\uline{\hspace{2cm}}}
+\end{center}
+% \vspace{-0.2cm}
+\noindent\rule{\textwidth}{0.1em}   % 分割线
+\begin{center}
+    
+    \fbox{\textbf{本实验报告只有前半部分, 作为预习报告上交}}
+\end{center}
+
+\section{实验目的}
+\begin{enumerate}
+    \item 观察简谐振动现象并测定周期
+    \item 测定弹簧倔强系数$k$和有效质量$m_0$
+    \item 观察简谐振动运动学特征
+    \item 验证机械能守恒定律
+    \item 用极限法测定瞬时速度
+    \item 理解平均速度和瞬时速度的关系
+\end{enumerate}
+\section{实验原理}
+
+\subsection{弹簧振子的简谐运动}
+水平气垫导轨上，滑块连接于两弹簧之间构成简谐振动系统。忽略空气阻力，根据牛顿第二定律：
+\begin{equation}
+-kx = m\ddot{x}, \qquad k = 2k_1, \quad m = m_0 + m_1
+\end{equation}
+该运动方程解为：
+\begin{equation}
+x = A\sin(\omega_0t + \phi_0)
+\end{equation}
+于是有振动周期：
+\begin{equation}
+T = 2\pi\sqrt{\frac{m_0 + m_1}{k}}
+\end{equation}
+为了方便拟合, 我们可以两边平方：
+\begin{equation}
+T^2 = \frac{4\pi^2(m_1 + m_0)}{k}
+\end{equation}
+在实验中测出不同的$m_1$和$T$数据点, 我们就可以通过最小二乘法拟合出$k$和$m_0$的值。
+
+\subsection{运动学特征}
+对位移求导就可以得到速度方程：
+\begin{equation}
+v = \frac{\dd x}{\dd t} = A\omega_0\cos(\omega_0t + \phi_0)
+\end{equation}
+由此可得速度与位移关系：
+\begin{equation}
+v^2 = \omega_0^2(A^2 - x^2)
+\end{equation}
+可见$v^2$与$x^2$成线性关系，实验中通过测量两者关系验证这一点
+
+\subsection{机械能守恒}
+简谐振子系统的总动能：
+\begin{equation}
+E_k = \frac{1}{2}(m_1 + m_0)v^2
+\end{equation}
+势能：
+\begin{equation}
+E_p = \frac{1}{2}kx^2
+\end{equation}
+从而我们得到总机械能：
+\begin{equation}
+E = E_p + E_k = \frac{1}{2}kA^2
+\end{equation}
+式中$k$和$A$均不随时间变化，说明机械能守恒。
+通过测量滑块$m_1$在不同位置的速度，从而计算弹性势能和振动势能，
+并进一步验证他们之间的相互转换关系和机械能守恒定律。
+
+\subsection{瞬时速度测定}
+瞬时速度 (无法被直接测量)：
+\begin{equation}
+v_{瞬} = \lim_{\Delta t \to 0}\frac{\Delta s}{\Delta t}
+\end{equation}
+平均速度 (实际测量值)：
+\begin{equation}
+\bar{v} = \frac{\Delta s}{\Delta t}
+\end{equation}
+通过减小$\Delta s$和$\Delta t$，$\bar{v}$逐渐趋近瞬时速度。实验中绘制$\bar{v}-\Delta s$和$\bar{v}-\Delta t$图，用外推法求得瞬时速度。
+
+\section{实验内容}
+\begin{enumerate}
+    \item 调平气垫导轨，测量速度验证水平度 (注意应选择多个点以验证整个导轨的水平度)
+    \item 构建弹簧振子，研究振幅与周期关系 
+    \item 在40cm振幅下，研究质量与周期关系
+    \item 使用U形挡光片测量不同位置速度 (注意确保挡光片安装正确，不偏离轨道中心线)
+    \item 在40cm振幅下验证机械能守恒
+    \item 通过最大速度与振幅关系求弹簧系数$k$
+    \item 测量滑块及挡光片质量 (注意多次测量取平均值，以减少偶然误差的影响)
+    \item 调整挡光片宽度，使用倾斜导轨测量如下内容：
+        \begin{itemize}
+            \item 50cm处通过时间和平均速度
+            \item 改变倾斜度重复测量 (从最小倾斜度开始逐渐增加，每完成一次测量后检查导轨的稳定性)
+            \item 将距离改为60cm重复测量 (改变距离时，标记好每个测量点的位置，确保数据记录清晰无误)
+        \end{itemize}
+\end{enumerate}
+
+\end{document}
